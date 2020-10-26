@@ -170,6 +170,7 @@ public class UserService implements CommunityConstant {
 
         LoginTicket loginTicket = new LoginTicket();
         loginTicket.setUserId(user.getId());
+        System.out.println("user = " + user);
         loginTicket.setTicket(CommunityUtil.generateUUID());
         loginTicket.setStatus(0);
         System.out.println("expired = " + expired);
@@ -181,6 +182,13 @@ public class UserService implements CommunityConstant {
         return map;
     }
 
+    /**
+     * 退出登录
+     * @param ticket
+     */
+    public void logout(String ticket){
+        loginTicketMapper.updateStatus(ticket, 1);
+    }
 }
 
 
