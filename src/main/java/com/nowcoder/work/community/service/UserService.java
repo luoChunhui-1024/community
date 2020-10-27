@@ -6,6 +6,7 @@ import com.nowcoder.work.community.entity.LoginTicket;
 import com.nowcoder.work.community.entity.User;
 import com.nowcoder.work.community.util.CommunityConstant;
 import com.nowcoder.work.community.util.CommunityUtil;
+import com.nowcoder.work.community.util.HostHolder;
 import com.nowcoder.work.community.util.MailClient;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -43,6 +44,9 @@ public class UserService implements CommunityConstant {
 
     @Value("${server.servlet.context-path}")
     private String contextPath;
+
+    @Autowired
+    private HostHolder hostHolder;
 
     public User findUserById(int id){
         return userMapper.selectById(id);
@@ -192,6 +196,49 @@ public class UserService implements CommunityConstant {
 
     public LoginTicket findLoginTicket(String ticket){
         return loginTicketMapper.selectByTicket(ticket);
+    }
+
+    // 更新用户的头像
+    public void updateHeader(int id, String headerUrl){
+        userMapper.updateHeader(id, headerUrl);
+    }
+
+    public Map<String, Object> updatePassword(String oldPassword, String newPassword){
+
+        Map<String, Object> map = new HashMap<>();
+        // 判断两个密码是否为空
+        if(StringUtils.isBlank(oldPassword)){
+            map.put("oldPasswordMsg", "原密码不能为空！");
+            return map;
+        }
+
+        if(StringUtils.isBlank(newPassword)){
+            map.put("newPasswordMsg", "新密码不能为空！");
+            return map;
+        }
+
+        if(oldPassword.length() < 3){
+            map.put("oldPasswordMsg", "密码长度不能小于3位！");
+            return map;
+        }
+
+        if(newPassword.length() < 3){
+            map.put("newPasswordMsg", "密码长度不能小于3位！");
+            return map;
+        }
+
+        // 从hostHolder中取得user判断原密码是否正确
+        User user = hostHolder.getUser();
+        if(!user.getPassword().equals(CommunityUtil.md5(oldPassword + user.getSalt()))){
+            map.put("oldPasswordMsg", "密码错误！");
+            return map;
+        }
+
+        newPassword = CommunityUtil.md5(newPassword + user.getSalt());
+
+        // 修改密码
+        userMapper.updatePassword(user.getId(), newPassword);
+        return null;
     }
 }
 
