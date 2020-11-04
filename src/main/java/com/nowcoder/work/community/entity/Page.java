@@ -53,7 +53,7 @@ public class Page {
      * 获取当前页的起始偏移量
      * @return
      */
-    public int getOffst(){
+    public int getOffset(){
         return (current - 1) * limit;
     }
 

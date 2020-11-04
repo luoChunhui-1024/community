@@ -23,7 +23,9 @@ public class TransactionTest {
     }
     @Test
     public void testSave2(){
-        Object obj = alphaService.save2();
-        System.out.println(obj);
+//        Object obj = alphaService.save2();
+//        System.out.println(obj);
+        System.out.println(Integer.MIN_VALUE);
+        System.out.println("-2147483648");
     }
 }
