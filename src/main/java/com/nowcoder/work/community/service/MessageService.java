@@ -44,4 +44,7 @@ public class MessageService {
         return messageMapper.insertMessage(message);
     }
 
+    public int readMessage(List<Integer> ids){
+        return messageMapper.updateStatus(ids, 1);
+    }
 }
