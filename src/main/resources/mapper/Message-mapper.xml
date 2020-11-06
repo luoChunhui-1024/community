@@ -8,6 +8,10 @@
         id, from_id, to_id, conversation_id, content, status, create_time
     </sql>
 
+    <sql id="insertFields">
+        from_id, to_id, conversation_id, content, status, create_time
+    </sql>
+
     <select id="selectConversations" resultType="Message">
         select <include refid="selectFields"></include>
         from message
@@ -61,4 +65,8 @@
         </if>
     </select>
 
+    <insert id="insertMessage" parameterType="Message">
+        insert into Message(<include refid="insertFields"></include> )
+        values(#{fromId}, #{toId}, #{conversationId}, #{content}, #{status}, #{createTime})
+    </insert>
 </mapper>
