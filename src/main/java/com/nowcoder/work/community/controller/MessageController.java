@@ -69,7 +69,7 @@ public class MessageController {
 
     @RequestMapping(path = "/letter/detail/{conversationId}", method = RequestMethod.GET)
     public String getLetterDetail(@PathVariable("conversationId")String conversationId, Page page, Model model){
-        Integer.parseInt("abc");
+
         // 分页信息
         page.setRows(messageService.findLetterCount(conversationId));
         page.setLimit(5);

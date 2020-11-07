@@ -1,4 +1,4 @@
-package demo;
+package demo.迅雷;
 
 public class Solution4 {
 
