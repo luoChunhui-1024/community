@@ -63,7 +63,7 @@ public class UserService implements CommunityConstant {
         Map<String, Object> map = new HashMap<>();
 
         // 空值处理
-        
+
         if(user == null){
             try {
                 throw new IllegalAccessException("参数不能为空！");
