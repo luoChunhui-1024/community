@@ -29,8 +29,15 @@ public class ServiceLogAspect {
     public void before(JoinPoint joinPoint){
         // 用户[1.2.3.4],在[xxx],访问了[com.nowcoder.community.service.xxx()].
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = attributes.getRequest();
-        String ip = request.getRemoteHost();
+        String ip = "";
+        // 因为消费者接收到信息后存储信息调用了messageService,
+        // 这个过程没有request, 所以在ServiceLogAspect中获取request就是空的，
+        // 所以应该判断一下requst是否为空，再使用request。
+        if(attributes != null){
+            HttpServletRequest request = attributes.getRequest();
+            ip = request.getRemoteHost();
+        }
+
         String now = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         String target = joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName();
         logger.info(String.format("用户[%s], 在[%s], 访问了[%s].", ip, now, target));
