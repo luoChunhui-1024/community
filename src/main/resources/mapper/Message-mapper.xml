@@ -109,7 +109,7 @@
 
     </select>
 
-    <select id="selectNotices" resultType="int">
+    <select id="selectNotices" resultType="Message">
           select <include refid="selectFields"></include>
           from message
           where status != 2
