@@ -32,4 +32,14 @@ public interface DiscussPostMapper {
      * @return
      */
     int updateCommentCount(@Param("id")int id, @Param("commentCount") int commentCount);
+
+    /**
+     * 修改帖子类型
+     */
+    int updateType(@Param("id") int id, @Param("type") int type);
+
+    /**
+     * 修改帖子状态
+     */
+    int updateStatus(@Param("id") int id, @Param("status") int status);
 }
