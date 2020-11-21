@@ -22,7 +22,6 @@ function publish() {
 		CONTEXT_PATH + "/discuss/add",
 		{"title":title, "content":content},
 		function (data) {
-			alert(data);
 			data = $.parseJSON(data);
 			// 在提示框中显示返回消息
 			$("#hintBody").text(data.msg);
