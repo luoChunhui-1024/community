@@ -46,4 +46,9 @@
     <update id = "updatePassword">
         update user set password = #{password} where id = #{id}
     </update>
+    <select id="selectAllUsers" resultType="User">
+        select <include refid="selectFields"></include>
+        from user
+    </select>
+
 </mapper>
