@@ -85,17 +85,17 @@ public class DiscussPostService {
     }
 
     public List<DiscussPost> findDiscussPosts(int userId, int offset, int limit, int orderMode){
-        if(userId == 0 && orderMode == 1){
-            return postListCache.get(offset + ":" + limit);
-        }
+//        if(userId == 0 && orderMode == 1){
+//            return postListCache.get(offset + ":" + limit);
+//        }
         logger.debug(">>>>>>>>>>>>>>>>load post list from DB.");
         return discussPostMapper.selectDiscussPosts(userId, offset, limit, orderMode);
     }
 
     public int findDiscussPostsRows(int userId){
-        if(userId == 0){
-            return postRowsCache.get(userId);
-        }
+//        if(userId == 0){
+//            return postRowsCache.get(userId);
+//        }
         logger.debug(">>>>>>>>>>>>>>>load post rows from DB.");
         return discussPostMapper.selectDiscussPostRows(userId);
     }

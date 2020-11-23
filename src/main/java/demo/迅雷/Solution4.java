@@ -1,5 +1,7 @@
 package demo.迅雷;
 
+import com.nowcoder.work.community.util.CommunityUtil;
+
 public class Solution4 {
 
     // 求连续子数组的最大乘积
@@ -28,6 +30,7 @@ public class Solution4 {
 
     public static void main(String[] args) {
         int[] arr = {-1, 2, 0, 4, 5, 6};
-        System.out.println(getMaxProduct(arr));
+        // System.out.println(getMaxProduct(arr));
+        System.out.println(CommunityUtil.generateUUID().substring(0, 14));
     }
 }

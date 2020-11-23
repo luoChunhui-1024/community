@@ -2,6 +2,7 @@ package com.nowcoder.work.community;
 
 import com.nowcoder.work.community.entity.DiscussPost;
 import com.nowcoder.work.community.service.DiscussPostService;
+import com.nowcoder.work.community.util.CommunityUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ public class CaffeineTests {
 
     @Test
     public void initDataForTest(){
-        for(int i = 0; i < 300000; i++){
+        for(int i = 0; i < 9000; i++){
             DiscussPost post = new DiscussPost();
             post.setUserId(111);
             post.setTitle("互联网求职暖春计划");
@@ -45,5 +46,11 @@ public class CaffeineTests {
     public void testDelete(){
         // 删除今天发的帖子
 
+    }
+
+
+    @Test
+    public void generateSecret(){
+        System.out.println(CommunityUtil.generateUUID().substring(0, 10));
     }
 }
