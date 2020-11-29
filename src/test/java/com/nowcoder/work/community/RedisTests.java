@@ -98,7 +98,7 @@ public class RedisTests {
     // 批量发送命令，节约网络开销
     @Test
     public void testBoundOperations(){
-        String redisKey = "test:count";
+        String redisKey = "test:count66";
         BoundValueOperations operations = redisTemplate.boundValueOps(redisKey);
         operations.increment();
         operations.increment();

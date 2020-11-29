@@ -1,5 +1,6 @@
-package com.nowcoder.work.community;
+package demo2;
 
+import com.nowcoder.work.community.CommunityApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
