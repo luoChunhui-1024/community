@@ -1,10 +1,11 @@
 package com.nowcoder.work.community.controller;
 
 import com.nowcoder.work.community.annotation.LoginRequired;
+import com.nowcoder.work.community.entity.Comment;
+import com.nowcoder.work.community.entity.DiscussPost;
+import com.nowcoder.work.community.entity.Page;
 import com.nowcoder.work.community.entity.User;
-import com.nowcoder.work.community.service.FollowService;
-import com.nowcoder.work.community.service.LikeService;
-import com.nowcoder.work.community.service.UserService;
+import com.nowcoder.work.community.service.*;
 import com.nowcoder.work.community.util.CommunityConstant;
 import com.nowcoder.work.community.util.CommunityUtil;
 import com.nowcoder.work.community.util.HostHolder;
@@ -17,14 +18,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -65,6 +66,12 @@ public class UserController implements CommunityConstant {
 
     @Value("${qiniu.bucket.header.url}")
     private String headerBucketUrl;
+
+    @Autowired
+    private DiscussPostService discussPostService;
+
+    @Autowired
+    private CommentService commentService;
 
     @LoginRequired
     @RequestMapping(path = "/setting", method= RequestMethod.GET)
@@ -206,5 +213,78 @@ public class UserController implements CommunityConstant {
         model.addAttribute("likeCount", likeCount);
 
         return "/site/profile";
+    }
+
+    // 查看我的帖子
+    @RequestMapping(path = "/my-post", method= RequestMethod.GET)
+    public String getMyPost(Model model, Page page){
+        // 方法调用前，SpringMVC会自动实例化MOdel和page, 并将Page注入Model
+        // 所以，在thymeleaf中可以直接访问Page对象中的数据
+        User user = hostHolder.getUser();
+        page.setRows(discussPostService.findDiscussPostsRows(user.getId()));
+        page.setPath("/user/my-post");
+
+        List<DiscussPost> list = discussPostService.findDiscussPosts(user.getId(), page.getOffset(), page.getLimit(), 0);
+        List<Map<String, Object>> discussPosts = new ArrayList<>();
+        for(DiscussPost post : list){
+            Map<String, Object> map = new HashMap<>();
+            map.put("post", post);
+
+            long likeCount = likeService.findEntityLikeCount(ENTITY_TYPE_POST, post.getId());
+            map.put("likeCount", likeCount);
+
+            discussPosts.add(map);
+        }
+        model.addAttribute("discussPosts", discussPosts);
+        return "site/my-post";
+    }
+
+    // 查看我的回复
+    @RequestMapping(path = "/my-reply", method= RequestMethod.GET)
+    public String getMyReply(Model model, Page page){
+        // 方法调用前，SpringMVC会自动实例化MOdel和page, 并将Page注入Model
+        // 所以，在thymeleaf中可以直接访问Page对象中的数据
+        User user = hostHolder.getUser();
+        page.setRows(discussPostService.findDiscussPostsRows(user.getId()));
+        page.setPath("/user/my-reply");
+
+        List<Comment> list = commentService.findCommentsOfUser(user.getId(), page.getOffset(), page.getLimit());
+        List<Map<String, Object>> comments = new ArrayList<>();
+        for(Comment comment : list){
+            Map<String, Object> map = new HashMap<>();
+            //System.out.println(comment);
+            // 判断这个评论回复的是帖子还是评论
+            // 如果是评论，需要再次查找，找到对应的帖子，方便跳转
+            if(comment.getEntityType() == ENTITY_TYPE_POST){
+                // 查找帖子
+                int postId = comment.getEntityId();
+                DiscussPost post = discussPostService.findDiscussPostById(postId);
+                if(post.getStatus() == 2){  // 如果帖子被删除了，直接跳过
+                    continue;
+                }
+                map.put("postId", postId);
+                map.put("post01", post);
+                map.put("comment01", null);
+                //System.out.println("post01>>>>>>>>>>>>>>>>>>>>>>");
+            }else if(comment.getEntityType() == ENTITY_TYPE_COMMENT){
+                // 查找回复的comment
+                Comment comment1 = commentService.findCommentById(comment.getEntityId());
+                int postId = comment1.getEntityId();
+                DiscussPost post = discussPostService.findDiscussPostById(postId);
+                if(post.getStatus() == 2){  // 如果帖子被删除了，直接跳过
+                    continue;
+                }
+                map.put("postId", postId);
+                map.put("comment01", comment1);
+                map.put("post01", null);
+                //System.out.println("comment01>>>>>>>>>>>>>>>>>>>>>>>>>");
+            }
+
+            map.put("comment", comment);
+
+            comments.add(map);
+        }
+        model.addAttribute("comments", comments);
+        return "site/my-reply";
     }
 }

@@ -55,4 +55,13 @@ public class CommentService implements CommunityConstant {
     public Comment findCommentById(int id){
         return commentMapper.selectCommentById(id);
     }
+
+    // 查找某人所有评论和回复
+    public List<Comment> findCommentsOfUser(int userId, int offset, int limit){
+        return commentMapper.selectCommentsOfUser(userId, offset, limit);
+    }
+
+    public int findCountOfUser(int userId){
+        return commentMapper.selectCountOfUser(userId);
+    }
 }
