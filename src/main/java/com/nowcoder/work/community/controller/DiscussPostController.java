@@ -1,9 +1,7 @@
 package com.nowcoder.work.community.controller;
 
-import com.nowcoder.work.community.entity.Comment;
-import com.nowcoder.work.community.entity.DiscussPost;
-import com.nowcoder.work.community.entity.Page;
-import com.nowcoder.work.community.entity.User;
+import com.nowcoder.work.community.entity.*;
+import com.nowcoder.work.community.event.EventProducer;
 import com.nowcoder.work.community.service.CommentService;
 import com.nowcoder.work.community.service.DiscussPostService;
 import com.nowcoder.work.community.service.LikeService;
@@ -12,6 +10,7 @@ import com.nowcoder.work.community.util.CommunityConstant;
 import com.nowcoder.work.community.util.CommunityUtil;
 import com.nowcoder.work.community.util.HostHolder;
 import com.nowcoder.work.community.util.RedisKeyUtil;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
@@ -45,6 +44,9 @@ public class DiscussPostController implements CommunityConstant {
     @Autowired
     private RedisTemplate redisTemplate;
 
+    @Autowired
+    private EventProducer eventProducer;
+
     @RequestMapping(path = "/add", method = RequestMethod.POST)
     @ResponseBody
     public String addDiscussPost(String title, String content){
@@ -62,6 +64,12 @@ public class DiscussPostController implements CommunityConstant {
         discussPostService.addDiscussPost(post);
 
         // 触发发帖事件
+        Event event = new Event()
+                .setTopic(TOPIC_PUBLISH)
+                .setUserId(user.getId())
+                .setEntityType(ENTITY_TYPE_POST)
+                .setEntityId(post.getId());
+        eventProducer.fireEvent(event);
 
         // 把帖子放到redis中
         String redisKey = RedisKeyUtil.getPostScoreKey();
@@ -164,7 +172,15 @@ public class DiscussPostController implements CommunityConstant {
     @RequestMapping(path = "/top", method = RequestMethod.POST)
     @ResponseBody
     public String setTop(int id){
+        User user = hostHolder.getUser();
         discussPostService.updateType(id, 1);
+        // 触发修改帖子事件
+        Event event = new Event()
+                .setTopic(TOPIC_PUBLISH)
+                .setUserId(user.getId())
+                .setEntityType(ENTITY_TYPE_POST)
+                .setEntityId(id);
+        //eventProducer.fireEvent(event);
         return CommunityUtil.getJSONString(0);
     }
 

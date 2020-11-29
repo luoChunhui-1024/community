@@ -88,7 +88,7 @@ public class ElasticSearchTests {
                 .withSort(SortBuilders.fieldSort("type").order(SortOrder.DESC))
                 .withSort(SortBuilders.fieldSort("score").order(SortOrder.DESC))
                 .withSort(SortBuilders.fieldSort("createTime").order(SortOrder.DESC))
-                .withPageable(PageRequest.of(0, 10))
+                .withPageable(PageRequest.of(20, 10))
                 .withHighlightFields(
                         new HighlightBuilder.Field("title").preTags("<em>").postTags("</em>"),
                         new HighlightBuilder.Field("content").preTags("<em>").postTags("</em>")
@@ -106,10 +106,10 @@ public class ElasticSearchTests {
     @Test
     public void testSearchByTemplate1(){
         NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
-                .withQuery(QueryBuilders.multiMatchQuery("互联网寒冬", "title", "content"))
-                .withSort(SortBuilders.fieldSort("type").order(SortOrder.DESC))
-                .withSort(SortBuilders.fieldSort("score").order(SortOrder.DESC))
-                .withSort(SortBuilders.fieldSort("createTime").order(SortOrder.DESC))
+                .withQuery(QueryBuilders.multiMatchQuery("互联网寒冬要来", "title", "content"))
+//                .withSort(SortBuilders.fieldSort("createTime").order(SortOrder.DESC))
+//                .withSort(SortBuilders.fieldSort("type").order(SortOrder.DESC))
+                 .withSort(SortBuilders.fieldSort("score").order(SortOrder.DESC))
                 .withPageable(PageRequest.of(0, 10))
                 .withHighlightFields(
                         new HighlightBuilder.Field("title").preTags("<em>").postTags("</em>"),
@@ -133,6 +133,7 @@ public class ElasticSearchTests {
             // 放到实体类中
             discussPosts.add(searchHit.getContent());
         }
+        System.out.println(search.getTotalHits());
         System.out.println(discussPosts.size());
         for(DiscussPost discussPost : discussPosts){
             System.out.println(discussPost);
