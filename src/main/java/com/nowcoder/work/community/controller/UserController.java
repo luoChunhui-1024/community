@@ -211,20 +211,20 @@ public class UserController implements CommunityConstant {
         // 获赞数量
         int likeCount = likeService.findUserLikeCount(userId);
         model.addAttribute("likeCount", likeCount);
-
+        model.addAttribute("nowUserId", userId);
         return "/site/profile";
     }
 
     // 查看我的帖子
-    @RequestMapping(path = "/my-post", method= RequestMethod.GET)
-    public String getMyPost(Model model, Page page){
+    @RequestMapping(path = "/my-post/{nowUserId}", method= RequestMethod.GET)
+    public String getMyPost(@PathVariable("nowUserId") int nowUserId, Model model, Page page){
         // 方法调用前，SpringMVC会自动实例化MOdel和page, 并将Page注入Model
         // 所以，在thymeleaf中可以直接访问Page对象中的数据
-        User user = hostHolder.getUser();
-        page.setRows(discussPostService.findDiscussPostsRows(user.getId()));
-        page.setPath("/user/my-post");
+        //User user = hostHolder.getUser();
+        page.setRows(discussPostService.findDiscussPostsRows(nowUserId));
+        page.setPath("/user/my-post/" + nowUserId);
 
-        List<DiscussPost> list = discussPostService.findDiscussPosts(user.getId(), page.getOffset(), page.getLimit(), 0);
+        List<DiscussPost> list = discussPostService.findDiscussPosts(nowUserId, page.getOffset(), page.getLimit(), 0);
         List<Map<String, Object>> discussPosts = new ArrayList<>();
         for(DiscussPost post : list){
             Map<String, Object> map = new HashMap<>();
@@ -240,15 +240,16 @@ public class UserController implements CommunityConstant {
     }
 
     // 查看我的回复
-    @RequestMapping(path = "/my-reply", method= RequestMethod.GET)
-    public String getMyReply(Model model, Page page){
+    // /my-reply/xxx
+    @RequestMapping(path = "/my-reply/{nowUserId}", method= RequestMethod.GET)
+    public String getMyReply(@PathVariable("nowUserId") int nowUserId, Model model, Page page){
         // 方法调用前，SpringMVC会自动实例化MOdel和page, 并将Page注入Model
         // 所以，在thymeleaf中可以直接访问Page对象中的数据
-        User user = hostHolder.getUser();
-        page.setRows(discussPostService.findDiscussPostsRows(user.getId()));
-        page.setPath("/user/my-reply");
 
-        List<Comment> list = commentService.findCommentsOfUser(user.getId(), page.getOffset(), page.getLimit());
+        page.setRows(discussPostService.findDiscussPostsRows(nowUserId));
+        page.setPath("/user/my-reply/" + nowUserId);
+
+        List<Comment> list = commentService.findCommentsOfUser(nowUserId, page.getOffset(), page.getLimit());
         List<Map<String, Object>> comments = new ArrayList<>();
         for(Comment comment : list){
             Map<String, Object> map = new HashMap<>();
@@ -284,6 +285,7 @@ public class UserController implements CommunityConstant {
 
             comments.add(map);
         }
+        model.addAttribute("nowUserId", nowUserId);
         model.addAttribute("comments", comments);
         return "site/my-reply";
     }

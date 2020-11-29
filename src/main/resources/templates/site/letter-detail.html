@@ -67,7 +67,7 @@
 						<h6><b class="square"></b> 来自 <i class="text-success" th:utext="${target.username}">落基山脉下的闲人</i> 的私信</h6>
 					</div>
 					<div class="col-4 text-right">
-						<button type="button" class="btn btn-secondary btn-sm" onclick="location.href='letter.html';">返回</button>
+						<button type="button" class="btn btn-secondary btn-sm" onclick="back();">返回</button>
 						<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#sendModal">给TA私信</button>
 					</div>
 				</div>
@@ -219,5 +219,10 @@
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
 	<script th:src="@{/js/global.js}"></script>
 	<script th:src="@{/js/letter.js}"></script>
+	<script>
+		function back() {
+			location.href=CONTEXT_PATH + "/letter/list";
+        }
+	</script>
 </body>
 </html>
