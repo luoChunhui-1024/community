@@ -115,6 +115,22 @@ public class EventConsumer implements CommunityConstant {
         elasticsearchService.saveDiscussPost(post);
     }
 
+    // 消费删帖事件
+    @KafkaListener(topics = {TOPIC_DELETE})
+    public void handleDeleteMessage(ConsumerRecord record){
+        if(record == null || record.value() == null){
+            logger.error("消息内容为空！");
+            return;
+        }
+
+        Event event = JSONObject.parseObject(record.value().toString(), Event.class);
+        if(event == null){
+            logger.error("消息格式错误！");
+            return;
+        }
+        elasticsearchService.deleteDiscussPost(event.getEntityId());
+    }
+
 
     // 消费分享事件
     @KafkaListener(topics = TOPIC_SHARE)
@@ -221,9 +237,6 @@ public class EventConsumer implements CommunityConstant {
             }else{
                 logger.info(String.format("第%d次上传失败[%s].", uploadTimes, fileName));
             }
-
-
-
         }
     }
 

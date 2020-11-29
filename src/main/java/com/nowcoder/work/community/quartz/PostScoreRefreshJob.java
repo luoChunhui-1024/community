@@ -3,6 +3,7 @@ package com.nowcoder.work.community.quartz;
 
 import com.nowcoder.work.community.entity.DiscussPost;
 import com.nowcoder.work.community.service.DiscussPostService;
+import com.nowcoder.work.community.service.ElasticsearchService;
 import com.nowcoder.work.community.service.LikeService;
 import com.nowcoder.work.community.util.CommunityConstant;
 import com.nowcoder.work.community.util.RedisKeyUtil;
@@ -12,6 +13,7 @@ import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.redis.core.BoundSetOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -35,6 +37,9 @@ public class PostScoreRefreshJob implements Job, CommunityConstant {
 
     // 牛客纪元
     private static final Date epoch;
+
+    @Autowired
+    private ElasticsearchService elasticsearchService;
 
     static {
         try {
@@ -83,5 +88,7 @@ public class PostScoreRefreshJob implements Job, CommunityConstant {
         // 更新帖子分数
         discussPostService.updateScore(postId, score);
         // 同步数据到ElasticSearch
+        post.setScore(score);
+        elasticsearchService.saveDiscussPost(post);
     }
 }
