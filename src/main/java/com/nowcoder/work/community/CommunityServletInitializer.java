@@ -1,4 +1,4 @@
-package demo2;
+package com.nowcoder.work.community;
 
 import com.nowcoder.work.community.CommunityApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
