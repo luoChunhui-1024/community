@@ -67,7 +67,7 @@
 						<h6><b class="square"></b> 系统通知</h6>
 					</div>
 					<div class="col-4 text-right">
-						<button type="button" class="btn btn-secondary btn-sm" onclick="location.href='notice.html';">返回</button>
+						<button type="button" class="btn btn-secondary btn-sm" onclick="back();">返回</button>
 					</div>
 				</div>
 				
@@ -191,5 +191,10 @@
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
 	<script th:src="@{/js/global.js}"></script>
 	<script th:src="@{/js/letter.js}"></script>
+	<script>
+		function back() {
+			location.href=CONTEXT_PATH + "/notice/list";
+        }
+	</script>
 </body>
 </html>
